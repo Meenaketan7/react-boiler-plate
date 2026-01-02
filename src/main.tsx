@@ -9,28 +9,66 @@ import { queryClient } from "./hooks";
 import PageNotFound from "./pages/error/404";
 import DefaultError from "./pages/error/default-error";
 import { Toaster } from "./components/ui/sonner";
+import { createRouteProgress } from "./config/route-progress";
+window.addEventListener("vite:preloadError", async (event) => {
+	event.preventDefault();
+	// Get current count from session storage or initialize to 0
+	const reloadCount = parseInt(sessionStorage.getItem("vitePreloadErrorCount") || "0", 10);
 
+	// Check if we've already tried 3 times
+	if (reloadCount >= 2) {
+		console.warn("Vite preload has failed multiple times. Stopping automatic reload.");
+		// Optionally show a user-facing message here
+		return;
+	}
+
+	try {
+		if ("caches" in window) {
+			const keys = await caches.keys();
+			await Promise.all(keys.map((key) => caches.delete(key)));
+		}
+	} catch (cleanupError) {
+		console.error(cleanupError);
+	}
+	//
+	// Increment and save the counter
+	sessionStorage.setItem("vitePreloadErrorCount", (reloadCount + 1).toString());
+
+	console.log(`Reloading page (attempt ${reloadCount + 1} of 2)...`);
+	window.location.reload(); // for example, refresh the page
+});
+
+const routeProgress = createRouteProgress();
 const router = createRouter({
-  routeTree,
-  context: { queryClient },
-  defaultPendingComponent: () => (
-    <div className="flex h-screen w-screen items-center justify-center bg-bunker-800">
-      <Loader />
-    </div>
-  ),
-  defaultNotFoundComponent: PageNotFound,
-  defaultErrorComponent: DefaultError,
+	routeTree,
+	context: { queryClient },
+	defaultPendingComponent: () => (
+		<div className="bg-bunker-800 flex h-screen w-screen items-center justify-center">
+			<Loader />
+		</div>
+	),
+	defaultNotFoundComponent: PageNotFound,
+	defaultErrorComponent: DefaultError
 });
 
 declare module "@tanstack/react-router" {
-  interface Register {
-    router: typeof router;
-  }
+	interface Register {
+		router: typeof router;
+	}
 }
 
+router.subscribe("onBeforeLoad", ({ pathChanged }) => {
+	if (pathChanged) {
+		routeProgress.start();
+	}
+});
+
+router.subscribe("onResolved", () => {
+	routeProgress.done();
+});
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-    <Toaster />
-  </StrictMode>
+	<StrictMode>
+		<RouterProvider router={router} />
+		<Toaster />
+	</StrictMode>
 );

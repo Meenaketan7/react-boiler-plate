@@ -11,7 +11,8 @@
 		"test:coverage": "vitest run --coverage",
 		"sonar": "node sonar-qube/sonarqube-scanner.js",
 		"prepare": "husky",
-		"typecheck": "tsc -b"
+		"typecheck": "tsc -b",
+		"lint:fix": "eslint . --fix"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.2.2",
