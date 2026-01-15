@@ -1,20 +1,16 @@
+---
 # React + TanStack Router Starter
 
-## Quick Start
+Opinionated React starter using **Vite**, **TanStack Router (File Routes)**, **TanStack Query**, **shadcn/ui**, **Tailwind CSS v4**, **Zustand**, and **Bun**.
 
----
-
-## React + TanStack Router Starter
-
-Opinionated React starter using Vite, TanStack Router/File Routes, TanStack Query, shadcn/ui, Tailwind CSS (v4), and Zustand for auth/session state.
-
+This project is designed for **large, scalable admin dashboards** with strict structure, routing discipline, and reusable screen patterns.
 ---
 
 ## Prerequisites
 
 ### Bun (required)
 
-This project uses **Bun** as the package manager and runtime.
+This project uses **Bun** as both the package manager and runtime.
 
 #### Install Bun
 
@@ -42,126 +38,111 @@ Restart PowerShell and verify:
 bun --version
 ```
 
-```
+---
 
+## Quick Start
 
-```
-
-1. Install deps
+### 1. Install dependencies
 
 ```bash
 bun install
 ```
 
-2. Configure env (`.env.local`)
+### 2. Configure environment variables
 
-```
+Create `.env.local`:
+
+```env
 VITE_API_BASE_URL=https://<your-supabase>.supabase.co
 VITE_API_KEY=<your-supabase-anon-key>
 MODE=development
 ```
 
-3. Run dev server
+### 3. Run development server
 
 ```bash
 bun dev
 ```
 
-4. Build
+### 4. Build the project
 
 ```bash
 bun run build
 ```
 
+---
+
 ## Project Structure
 
-- `src/main.tsx` — router + providers bootstrap.
-- `src/routes.ts` — virtual route config (TanStack Router plugin).
-- `src/routeTree.gen.ts` — generated; do not edit.
-- `src/pages/` — file-based routes:
-  - `auth/` login/forgot flows (guarded by `middlewares/restrict-login-signup`).
-  - `middlewares/` route guards (auth, admin).
-  - `app/` protected area (layout + dashboards/admin).
-  - `error/` error routes.
-  - `public/` public screens.
-- `src/layouts/default-layout/` — main app shell (dark, shadcn sidebar layout).
-- `src/components/` — UI (shadcn primitives) and screen-level components.
-- `src/styles/global.css` — theme tokens + Tailwind base.
-- `src/hooks/`:
-  - `apis/` — TanStack Query client, auth mutation, request helpers.
-  - `store/auth/` — Zustand store for tokens/user with expiry checks.
-  - utility hooks.
-- `src/lib/utils/` — helpers (token service, classnames, role checks).
-- `src/config/` — env loader, fetch wrapper (`request.ts`).
-
-## Theming
-
-- Tokens defined in `src/styles/global.css` (`:root` and `.dark`) mapped to Tailwind via `@theme inline`.
-- Dark-friendly palette with brand purple (`--primary`) and neutrals.
-- Components consume CSS variables (`bg-background`, `text-foreground`, etc.).
-
-## Routing
-
-- TanStack Router with virtual config (`src/routes.ts`) → generated `routeTree.gen.ts`.
-- Middlewares:
-  - `middlewares/restrict-login-signup` — redirects authed users away from auth pages.
-  - `middlewares/authenticate` — protects app area; redirects to `/login`.
-  - `middlewares/require-admin` — role-gated areas.
-- Protected layout: `src/pages/app/layout.tsx` wraps sidebar shell + `<Outlet />`.
-
-## Auth Flow
-
-- Login screen (`src/pages/auth/login/index.tsx`) uses `useLogin` mutation (TanStack Query).
-- `request.ts` adds `apikey` and `Authorization` headers from Zustand state; expires check clears session.
-- Zustand store (`src/hooks/store/auth`) persists tokens/expiry in `localStorage`.
-- `tokenServices` provides localStorage helpers.
-
-## Creating Screens
-
-1. Add a route file under `src/pages/.../routes.ts[x]` using `createFileRoute("/path")`.
-2. Add the screen component in the same folder.
-3. If the route is protected, place under `app/` so it is wrapped by `authenticate` middleware; for admin-only, nest under `require-admin`.
-4. Update `src/routes.ts` if you need a new virtual entry (path or layout).
-5. Run `bun dev` (or `bun run build`) to regenerate `routeTree.gen.ts`.
-
-## Layout & Sidebar
-
-- Shell is in `src/layouts/default-layout/index.tsx`: shadcn sidebar + header/breadcrumb bar + content panes.
-- Sidebar content lives in `src/components/screens-component/layouts/app-side-bar.tsx` (brand block, nav, projects, profile menu).
-
-## API Calls
-
-- Use `request()` from `src/config/request.ts` for fetch calls; it handles base URL, apikey, auth headers, error parsing, and session expiry.
-- Prefer TanStack Query for data fetching/caching; see `src/hooks/apis/auth/mutaion.ts` as a pattern.
-
-## Scripts
-
-- `bun dev` — start dev server (with host 0.0.0.0).
-- `bun run build` — type-check + build.
-- `bun preview` — preview build.
-- `bun lint` — lint code.
-- `bun run lint:fix` — lint and auto-fix.
-- `bun run typecheck` — run TypeScript type checking.
-- `bun run test:coverage` — run tests with coverage.
-
-## Notes
-
-- Do not edit `routeTree.gen.ts`.
-- Keep env secrets out of source control.
-- Extend UI using shadcn primitives in `src/components/ui`.
-- This project uses Bun as the package manager for faster installs and runtime performance.
-
-## Screen Scaffolding (Recommended)
-
-To keep screens, routes, and APIs consistent, this project includes a **Bun-based screen scaffolding script**.
-
-It automatically creates:
-
-- screen layouts (web + mobile)
-- page route files
-- optional API hooks with barrel exports
+```text
+src/
+├─ main.tsx                 # App bootstrap (router + providers)
+├─ routes.ts                # Virtual route config
+├─ routeTree.gen.ts         # Generated – DO NOT EDIT
+├─ pages/                   # File-based routes
+│  ├─ auth/                 # Login / forgot password
+│  ├─ middlewares/          # Route guards
+│  ├─ app/(_authenticated)/ # Protected area
+│  ├─ error/                # Error pages
+│  └─ public/               # Public pages
+├─ components/
+│  ├─ ui/                   # shadcn primitives
+│  └─ screens-component/    # Screen-level UI (web/mobile)
+├─ hooks/
+│  ├─ apis/                 # TanStack Query APIs
+│  └─ store/                # Zustand stores
+├─ layouts/                 # App shell layouts
+├─ config/                  # env + request wrapper
+├─ lib/utils/               # Utilities
+└─ styles/                  # Tailwind + theme tokens
+```
 
 ---
+
+## Routing System
+
+- Uses **TanStack Router + virtual routes**
+- Routes defined in `src/routes.ts`
+- Generated tree in `routeTree.gen.ts` (do not edit)
+
+### Middlewares
+
+| Middleware            | Purpose                                 |
+| --------------------- | --------------------------------------- |
+| restrict-login-signup | Prevent logged-in users from auth pages |
+| authenticate          | Protects authenticated routes           |
+| require-admin         | Admin-only routes                       |
+
+### Protected Layout
+
+```text
+src/pages/app/(_authenticated)/layout.tsx
+```
+
+Wraps sidebar + header + `<Outlet />`.
+
+---
+
+## API Layer
+
+- All API calls go through `request()` from:
+
+  ```ts
+  src / config / request.ts;
+  ```
+
+- Automatically injects:
+  - `apikey`
+  - `Authorization`
+  - handles expiry + logout
+
+- Use **TanStack Query** for all data fetching.
+
+---
+
+## Screen Scaffolding (Highly Recommended)
+
+To keep routing, screens, and APIs consistent, this project includes a **screen scaffolding script**.
 
 ### Script Location
 
@@ -169,7 +150,9 @@ It automatically creates:
 /scripts/scaffold-screen.ts
 ```
 
-Add this to your `package.json`:
+### Register Script
+
+Add to `package.json`:
 
 ```json
 {
@@ -181,11 +164,11 @@ Add this to your `package.json`:
 
 ---
 
-### What the Script Generates
+## What the Script Generates
 
-#### By default
+### Screen UI
 
-```
+```text
 src/components/screens-component/<screen-name>/
 ├─ components/
 │  └─ index.ts
@@ -196,15 +179,17 @@ src/components/screens-component/<screen-name>/
 └─ index.ts
 ```
 
-```
+### Page Route (unless --no-pages)
+
+```text
 src/pages/<parent>/<screen-name>/
 ├─ index.tsx
 └─ routes.ts
 ```
 
-#### With `--api`
+### API Layer (with --api)
 
-```
+```text
 src/hooks/apis/<screen-name>/
 ├─ queries.ts
 ├─ mutations.ts
@@ -212,55 +197,100 @@ src/hooks/apis/<screen-name>/
 └─ index.ts
 ```
 
-Also auto-adds:
+Also auto-updates:
+
+```ts
+src / hooks / apis / index.ts;
+```
 
 ```ts
 export * from "./<screen-name>";
 ```
 
-to:
-
-```
-src/hooks/apis/index.ts
-```
-
 ---
 
-### Usage
+## Screen Script Usage
 
-#### Create a new screen
+### Basic screen
 
 ```bash
 bun run new:screen netskill-lp-modules
 ```
 
-#### Create a screen with API module
+### Screen with API hooks
 
 ```bash
 bun run new:screen assessment-performance-report --api
 ```
 
-#### Create under a specific parent route
+### Create under authenticated area
 
 ```bash
-bun run new:screen completion-ratio --parent=app/(_authenticated)/reports
+bun run new:screen my-screen --parent=app/(_authenticated)
 ```
 
-#### Skip page creation (layouts only)
+### Create under reports
+
+IMPORTANT: zsh requires escaping parentheses.
 
 ```bash
-bun run new:screen my-screen --no-pages
+bun run new:screen learning-path-report --api --parent=app/\(_authenticated\)/reports
 ```
 
-#### Force overwrite existing files
+### Create under settings
+
+```bash
+bun run new:screen platform-customization --parent=app/\(_authenticated\)/settings
+```
+
+### Skip page creation (UI only)
+
+```bash
+bun run new:screen my-shared-screen --no-pages
+```
+
+### Force overwrite existing files
 
 ```bash
 bun run new:screen my-screen --force
 ```
 
+### Combine flags
+
+```bash
+bun run new:screen completion-ratio \
+  --api \
+  --force \
+  --parent=app/\(_authenticated\)/reports
+```
+
 ---
 
-### Generated Page Pattern
+## zsh Users: IMPORTANT
+
+zsh treats parentheses as glob patterns.
+
+Always escape or quote paths containing:
+
+```text
+(_authenticated)
+```
+
+Correct examples:
+
+```bash
+--parent=app/\(_authenticated\)/reports
+```
+
+or
+
+```bash
+--parent="app/(_authenticated)/reports"
+```
+
+---
+
+## Generated Page Pattern
 
 ```tsx
 import { ScreenWebLayout } from "@/components/screens-component/screen/web-layout";
@@ -274,5 +304,31 @@ function Screen() {
 
 export default Screen;
 ```
+
+---
+
+## Scripts Reference
+
+| Command            | Description              |
+| ------------------ | ------------------------ |
+| bun dev            | Start dev server         |
+| bun run build      | Typecheck + build        |
+| bun preview        | Preview production build |
+| bun lint           | Run ESLint               |
+| bun run lint:fix   | Auto-fix lint            |
+| bun run typecheck  | TypeScript check         |
+| bun run new:screen | Scaffold new screen      |
+
+---
+
+## Rules & Best Practices
+
+- Do not edit `routeTree.gen.ts`
+- Always use the screen scaffold script
+- Screens live in `screens-component`
+- Pages are thin route wrappers only
+- APIs must live under `hooks/apis`
+- Prefer query + mutation hooks
+- Do not place logic inside layouts
 
 ---

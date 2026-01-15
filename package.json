@@ -12,7 +12,8 @@
 		"sonar": "node sonar-qube/sonarqube-scanner.js",
 		"prepare": "husky",
 		"typecheck": "tsc -b",
-		"lint:fix": "eslint . --fix"
+		"lint:fix": "eslint . --fix",
+		"new:screen": "bun scripts/scaffold-screen.ts"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^5.2.2",
