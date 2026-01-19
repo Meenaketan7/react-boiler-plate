@@ -261,14 +261,14 @@ declare module '@tanstack/react-router' {
     '/_restrict-login-signup': {
       id: '/_restrict-login-signup'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof middlewaresRestrictLoginSignupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticate': {
       id: '/_authenticate'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof middlewaresAuthenticateRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -324,7 +324,7 @@ declare module '@tanstack/react-router' {
     '/_authenticate/_app-layout': {
       id: '/_authenticate/_app-layout'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof app_authenticatedLayoutRouteImport
       parentRoute: typeof middlewaresAuthenticateRoute
     }
@@ -359,14 +359,14 @@ declare module '@tanstack/react-router' {
     '/_authenticate/_app-layout/_require-admin': {
       id: '/_authenticate/_app-layout/_require-admin'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof middlewaresRequireAdminRouteImport
       parentRoute: typeof app_authenticatedLayoutRoute
     }
     '/_authenticate/_app-layout/_require-admin/_admin-layout': {
       id: '/_authenticate/_app-layout/_require-admin/_admin-layout'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof appadminLayoutRouteImport
       parentRoute: typeof middlewaresRequireAdminRoute
     }
