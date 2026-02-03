@@ -10,6 +10,7 @@ import PageNotFound from "./pages/error/404";
 import DefaultError from "./pages/error/default-error";
 import { Toaster } from "./components/ui/sonner";
 import { createRouteProgress } from "./config/route-progress";
+import { NetworkGate } from "./components/core/system/network-gate";
 window.addEventListener("vite:preloadError", async (event) => {
 	event.preventDefault();
 	// Get current count from session storage or initialize to 0
@@ -68,7 +69,9 @@ router.subscribe("onResolved", () => {
 });
 createRoot(document.getElementById("root")!).render(
 	<StrictMode>
-		<RouterProvider router={router} />
-		<Toaster />
+		<NetworkGate>
+			<RouterProvider router={router} />
+			<Toaster />
+		</NetworkGate>
 	</StrictMode>
 );

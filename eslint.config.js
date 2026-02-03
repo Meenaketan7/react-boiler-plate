@@ -22,7 +22,7 @@ const compat = new FlatCompat({
  * - Do NOT enforce stylistic formatting rules here (Prettier handles formatting).
  */
 export default tseslint.config(
-	{ ignores: ["dist", "scripts/**", "src/components/ui/**"] },
+	{ ignores: ["dist", "scripts/**", "src/components/ui/**", "coverage"] },
 	{
 		extends: [
 			// tanstack plugin recommended helpers (file-based router checks)
