@@ -1,4 +1,4 @@
-import { defineConfig, PluginOption } from "vite";
+import { defineConfig, PluginOption, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import tsconfigPaths from "vite-tsconfig-paths";
@@ -18,28 +18,33 @@ const virtualRouteFileChangeReloadPlugin: PluginOption = {
 	}
 };
 // https://vite.dev/config/
-export default defineConfig({
-	resolve: {
-		alias: {
-			"@": path.resolve(__dirname, "src"),
-			"~": path.resolve(__dirname)
+export default defineConfig(({ mode }) => {
+	const env = loadEnv(mode, process.cwd(), "");
+	process.env = { ...process.env, ...env };
+
+	return {
+		resolve: {
+			alias: {
+				"@": path.resolve(__dirname, "src"),
+				"~": path.resolve(__dirname)
+			}
+		},
+		plugins: [
+			tsconfigPaths(),
+			nodePolyfills({ globals: { Buffer: true } }),
+			tanstackRouter({
+				target: "react",
+				autoCodeSplitting: true,
+				routesDirectory: path.resolve(__dirname, "src/pages"),
+				virtualRouteConfig: "./src/routes.ts",
+				generatedRouteTree: "./src/routeTree.gen.ts"
+			}),
+			topLevelAwait(),
+			react(),
+			virtualRouteFileChangeReloadPlugin
+		],
+		server: {
+			port: 3000
 		}
-	},
-	plugins: [
-		tsconfigPaths(),
-		nodePolyfills({ globals: { Buffer: true } }),
-		tanstackRouter({
-			target: "react",
-			autoCodeSplitting: true,
-			routesDirectory: path.resolve(__dirname, "src/pages"),
-			virtualRouteConfig: "./src/routes.ts",
-			generatedRouteTree: "./src/routeTree.gen.ts"
-		}),
-		topLevelAwait(),
-		react(),
-		virtualRouteFileChangeReloadPlugin
-	],
-	server: {
-		port: 3000
-	}
+	};
 });
